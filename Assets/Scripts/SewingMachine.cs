@@ -8,7 +8,9 @@ public class SewingMachine : MonoBehaviour
     public Transform leverObj; 
     public Transform wheelObj;
     public Transform onOffButton;
-    //public AudioSource machineSound;
+    
+    public AudioSource machineSound;
+    public AudioClip machineClip;
 
     [Header("Parametry")]
     public float needleSpeed = 20f;
@@ -25,6 +27,7 @@ public class SewingMachine : MonoBehaviour
         if(needleObj) startNeedlePos = needleObj.localPosition;
         if(leverObj) startLeverPos = leverObj.localPosition;
         if(onOffButton) onOffButton.rotation = Quaternion.Euler(onOffButton.localEulerAngles.x, OFFPOSITION, onOffButton.localEulerAngles.z);
+        machineSound.clip = machineClip;
     }
 
     void Update()
@@ -42,8 +45,13 @@ public class SewingMachine : MonoBehaviour
     public void TogglePower()
     {
         isRunning = !isRunning;
-        /*if (isRunning) machineSound?.Play();
-        else machineSound?.Stop();*/
+        if (isRunning && machineSound)
+        {
+            machineSound.loop = true;
+            if (!machineSound.isPlaying) 
+                machineSound.Play();
+        }
+        else machineSound?.Stop();
         
         var targetY = isRunning ? -OFFPOSITION : OFFPOSITION;
         onOffButton.rotation = Quaternion.Euler(onOffButton.localEulerAngles.x, targetY, onOffButton.localEulerAngles.z);
