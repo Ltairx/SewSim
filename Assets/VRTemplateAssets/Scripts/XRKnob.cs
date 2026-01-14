@@ -85,6 +85,18 @@ namespace Unity.VRTemplate
             }
         }
 
+        public enum RotationAxis { X, Y, Z }
+
+        private float m_LastSentValue = -1f;
+        
+        [Header("Haptics")]
+        [SerializeField] [Range(0, 1)] float m_HapticAmplitude = 0.5f;
+        [SerializeField] float m_HapticDuration = 0.05f;
+        
+        [SerializeField] 
+        [Tooltip("Oś, wokół której ma obracać się rączka/pierścień")]
+        RotationAxis m_RotationAxis = RotationAxis.X;
+        
         [Serializable]
         [Tooltip("Event called when the value of the knob is changed")]
         public class ValueChangeEvent : UnityEvent<float> { }
@@ -352,7 +364,18 @@ namespace Unity.VRTemplate
             }
 
             if (m_Handle != null)
-                m_Handle.localEulerAngles = new Vector3(0.0f, angle, 0.0f);
+            {
+                Vector3 newRotation = Vector3.zero;
+
+                switch (m_RotationAxis)
+                {
+                    case RotationAxis.X: newRotation.x = angle; break;
+                    case RotationAxis.Y: newRotation.y = angle; break;
+                    case RotationAxis.Z: newRotation.z = angle; break;
+                }
+
+                m_Handle.localEulerAngles = newRotation;
+            }
         }
 
         void SetValue(float newValue)
@@ -369,7 +392,22 @@ namespace Unity.VRTemplate
             }
 
             m_Value = newValue;
-            m_OnValueChange.Invoke(m_Value);
+            if (!Mathf.Approximately(m_Value, m_LastSentValue))
+            {
+                m_LastSentValue = m_Value;
+                SendHapticClick();
+                m_OnValueChange.Invoke(m_Value);
+            }
+            
+            //m_OnValueChange.Invoke(m_Value);
+        }
+        
+        void SendHapticClick()
+        {
+            if (m_Interactor != null && m_Interactor is XRBaseInputInteractor controllerInteractor)
+            {
+                controllerInteractor.SendHapticImpulse(m_HapticAmplitude, m_HapticDuration);
+            }
         }
 
         float ValueToRotation()

@@ -1,0 +1,207 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &250393411537698245
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5062760991309070734}
+  m_Layer: 0
+  m_Name: Managers 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5062760991309070734
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 250393411537698245}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3, y: 0.39022, z: 1.16516}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2244381207652922442}
+  - {fileID: 7515484621921858516}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &721455598224758747
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2244381207652922442}
+  - component: {fileID: 4442390842791484175}
+  m_Layer: 0
+  m_Name: TutorialManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2244381207652922442
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 721455598224758747}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5062760991309070734}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4442390842791484175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 721455598224758747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dee4a2e6d13316c41b399717a24aefe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialManager
+  steps:
+  - instruction: "Witaj w trena\u017Ceru maszyny do szycia! Teraz odb\u0119dziesz
+      samouczek, kt\xF3ry poprowadzi Ciebie po kolejnych elementach maszyny. \nPodpowied\u017A:
+      szukaj element\xF3w pod\u015Bwietlonych na \u017C\xF3\u0142to."
+    highlightTarget: {fileID: 0}
+    actionID: Welcome
+    completeByButton: 1
+  - instruction: "Uruchom maszyn\u0119"
+    highlightTarget: {fileID: 0}
+    actionID: TurnOnMachine
+    completeByButton: 0
+  - instruction: "Pod\u015Bwietlony element odpowiada za pr\u0119dko\u015B\u0107
+      ig\u0142y, im mocniej naci\u015Bniesz tym szybciej si\u0119 porusza. (Tutaj
+      u\u017Cywamy przycisku grip, normalnie obs\u0142uguje sie to stop\u0105)"
+    highlightTarget: {fileID: 0}
+    actionID: Speed
+    completeByButton: 0
+  - instruction: "Teraz mog\u0142e\u015B zobaczy\u0107 jak porusza si\u0119 ig\u0142a
+      w zalezno\u015Bci jak mocno wciskasz wcze\u015Bniej wskazany przycisk."
+    highlightTarget: {fileID: 0}
+    actionID: needle
+    completeByButton: 1
+  - instruction: "Jednak aby szy\u0107 potrzebujemy materia\u0142u. Podnie\u015B
+      wybrany i wsu\u0144 go pod ig\u0142\u0119"
+    highlightTarget: {fileID: 0}
+    actionID: Fabric
+    completeByButton: 1
+  - instruction: "Aby materia\u0142 nie przesuwa\u0142 si\u0119 podczas szycia, zaci\u015Bnij
+      stopk\u0119 poprzez przesuni\u0119cie d\u017Awigni z ty\u0142u."
+    highlightTarget: {fileID: 0}
+    actionID: Foot
+    completeByButton: 0
+  - instruction: "Teraz czas na ni\u0107. Podnie\u015B wybran\u0105 szpu\u0142k\u0119
+      i wsu\u0144 j\u0105 we wskazane miejsce."
+    highlightTarget: {fileID: 0}
+    actionID: Strand
+    completeByButton: 0
+  - instruction: "Nast\u0119pnie ni\u0107 trzeba przeprowadzi\u0107 przez wskazane
+      miejsca. Jednak dla u\u0142atwienia zrobili\u015Bmy to za Ciebie :)"
+    highlightTarget: {fileID: 0}
+    actionID: StrandHelp
+    completeByButton: 1
+  - instruction: "Wykonane kroki wystarcz\u0105 do podstawowego szycia. Jednak przedstawimy
+      co robi\u0105 pozosta\u0142e elementy."
+    highlightTarget: {fileID: 0}
+    actionID: Continue
+    completeByButton: 1
+  - instruction: "To pokr\u0119t\u0142o odpowiada za regulacje d\u0142ugo\u015Bci
+      szwu"
+    highlightTarget: {fileID: 0}
+    actionID: Corb
+    completeByButton: 1
+  - instruction: "To pokr\u0119t\u0142o odpowiada za ustawienie ig\u0142y. Ma by\u0107
+      po lewej, \u015Brodku czy prawej?"
+    highlightTarget: {fileID: 0}
+    actionID: Wheel2
+    completeByButton: 1
+  - instruction: "To pokr\u0119t\u0142o odpowiada za regulacje szeroko\u015Bci/odchylenia
+      zygzaku szwu"
+    highlightTarget: {fileID: 0}
+    actionID: Wheel
+    completeByButton: 1
+  - instruction: "To pokr\u0119t\u0142o ustawia nietypowe \u015Bciegi"
+    highlightTarget: {fileID: 0}
+    actionID: Wheel1
+    completeByButton: 1
+  - instruction: "To pokr\u0119t\u0142o reguluje zacisk nici. Nici bywaj\u0105 grubsze
+      lub ciensze, dzi\u0119ki temu nie wypadn\u0105."
+    highlightTarget: {fileID: 0}
+    actionID: Wheel4
+    completeByButton: 1
+  - instruction: "To pokr\u0119t\u0142o pozwala na wybranie opcji czerwonej lub czarnej
+      z pokr\u0119t\u0142a z nietypowymi \u015Bciegami"
+    highlightTarget: {fileID: 0}
+    actionID: Wheel3
+    completeByButton: 1
+  - instruction: "To ju\u017C wszystko z tego samouczka. Powodzenia!"
+    highlightTarget: {fileID: 0}
+    actionID: End
+    completeByButton: 1
+  tutorialText: {fileID: 0}
+  nextButton: {fileID: 0}
+--- !u!1 &8663234307251520090
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7515484621921858516}
+  - component: {fileID: 6049353066071105574}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7515484621921858516
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8663234307251520090}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5062760991309070734}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6049353066071105574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8663234307251520090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf5539da767fc2244bdfe8642c0322f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  mainMenuCanvas: {fileID: 0}
+  _tutorialManager: {fileID: 4442390842791484175}
