@@ -34,9 +34,11 @@ public class SewingMachine : MonoBehaviour
     {
         if (isRunning && needleObj && wheelObj)
         {
-            float newY = startNeedlePos.y + Mathf.Sin(Time.time * needleSpeed) * needleAmplitude;
+            float sineNormalized = (Mathf.Sin(Time.time * needleSpeed) - 1f) * 0.5f;
+            float newY = startNeedlePos.y + sineNormalized * needleAmplitude;
             needleObj.localPosition = new Vector3(startNeedlePos.x, newY, startNeedlePos.z);
-            leverObj.localPosition = new Vector3(startLeverPos.x, newY, startLeverPos.z);
+            float newY2 = startLeverPos.y + sineNormalized * needleAmplitude;
+            leverObj.localPosition = new Vector3(startLeverPos.x, newY2, startLeverPos.z);
 
             wheelObj.Rotate(Vector3.forward * needleSpeed * 50f * Time.deltaTime);
         }

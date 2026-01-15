@@ -827,8 +827,8 @@ Transform:
   m_GameObject: {fileID: 3351960358355263547}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.6344998, y: -0.27500004, z: 1.335}
-  m_LocalScale: {x: 0.044999998, y: 0.19999999, z: 0.044999998}
+  m_LocalPosition: {x: -0.6344998, y: -0.124, z: 1.335}
+  m_LocalScale: {x: 0.044999998, y: 0.38, z: 0.044999998}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4149712983672146756}
@@ -1596,7 +1596,7 @@ MonoBehaviour:
   machineSound: {fileID: 7412179148993354080}
   machineClip: {fileID: 8300000, guid: 6aacbc0f00497354b8ab53210a0534f7, type: 3}
   needleSpeed: 20
-  needleAmplitude: 0.02
+  needleAmplitude: 0.35
   isRunning: 0
 --- !u!82 &7412179148993354080
 AudioSource:
