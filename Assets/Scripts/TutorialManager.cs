@@ -20,13 +20,14 @@ public class TutorialManager : MonoBehaviour
     [Header("UI References")]
     public TMPro.TextMeshProUGUI tutorialText;
     public GameObject nextButton;
+    
+    public event Action OnTutorialComplete;
 
     public void StartTutorial()
     {
         gameObject.SetActive(true);
+        ShowStep(0);
     }
-
-    void Start() => ShowStep(0);
 
     private void ShowStep(int index)
     {
@@ -77,5 +78,7 @@ public class TutorialManager : MonoBehaviour
     private void EndTutorial()
     {
         Debug.Log("Tutorial skonczony");
+        OnTutorialComplete?.Invoke();
+        gameObject.SetActive(false);
     }
 }
