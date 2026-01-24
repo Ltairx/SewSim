@@ -13,12 +13,15 @@ public class SewingMachine : MonoBehaviour
     public AudioClip machineClip;
 
     [Header("Parametry")]
-    public float needleSpeed = 20f;
-    public float needleAmplitude = 0.02f; 
+    public float maxNeedleSpeed = 20f;
+    public float needleAmplitude = 0.02f;
 
-    [field: SerializeField] private bool isRunning = false;
+    [field: SerializeField] private float currentPressure = 0f;
+    [field: SerializeField] private bool isOn = false;
+    
     private Vector3 startNeedlePos;
     private Vector3 startLeverPos;
+    private float cyclePosition = 0f;
     
     private readonly float OFFPOSITION = 30;
 
@@ -26,38 +29,65 @@ public class SewingMachine : MonoBehaviour
     {
         if(needleObj) startNeedlePos = needleObj.localPosition;
         if(leverObj) startLeverPos = leverObj.localPosition;
-        if(onOffButton) onOffButton.rotation = Quaternion.Euler(onOffButton.localEulerAngles.x, OFFPOSITION, onOffButton.localEulerAngles.z);
-        machineSound.clip = machineClip;
+        
+        UpdateOnOffButton();
+
+        if (machineSound)
+        {
+            machineSound.clip = machineClip;
+            machineSound.loop = true;
+            machineSound.Stop();
+        }
     }
 
-    void Update()
+    private void UpdateOnOffButton()
     {
-        if (isRunning && needleObj && wheelObj)
+        if (!onOffButton) return;
+        
+        var targetY = isOn ? -OFFPOSITION : OFFPOSITION;
+        onOffButton.localRotation = Quaternion.Euler(onOffButton.localEulerAngles.x, targetY, onOffButton.localEulerAngles.z);
+    }
+
+    private void Update()
+    {
+        if (isOn && currentPressure > 0.01f)
         {
-            float sineNormalized = (Mathf.Sin(Time.time * needleSpeed) - 1f) * 0.5f;
-            float newY = startNeedlePos.y + sineNormalized * needleAmplitude;
+            var currentSpeed = maxNeedleSpeed * currentPressure;
+            cyclePosition += Time.deltaTime * currentSpeed;
+            var sineNormalized = (Mathf.Sin(cyclePosition) - 1f) * 0.5f;
+            
+            var newY = startNeedlePos.y + sineNormalized * needleAmplitude;
             needleObj.localPosition = new Vector3(startNeedlePos.x, newY, startNeedlePos.z);
-            float newY2 = startLeverPos.y + sineNormalized * needleAmplitude;
+            
+            var newY2 = startLeverPos.y + sineNormalized * needleAmplitude;
             leverObj.localPosition = new Vector3(startLeverPos.x, newY2, startLeverPos.z);
 
-            wheelObj.Rotate(Vector3.forward * needleSpeed * 50f * Time.deltaTime);
+            wheelObj.Rotate(Vector3.forward * (currentSpeed * 50f * Time.deltaTime));
+
+            if (!machineSound.isPlaying) machineSound.Play();
+            
+            machineSound.pitch = Mathf.Lerp(0.2f, 1.0f, currentPressure);
+        }
+        else
+        {
+            if (machineSound.isPlaying) machineSound.Stop();
         }
     }
     
     public void TogglePower()
     {
-        isRunning = !isRunning;
-        if (isRunning && machineSound)
-        {
-            machineSound.loop = true;
-            if (!machineSound.isPlaying) 
-                machineSound.Play();
-        }
-        else machineSound?.Stop();
+        isOn = !isOn;
         
-        var targetY = isRunning ? -OFFPOSITION : OFFPOSITION;
+        UpdateOnOffButton();
+        if (!isOn) currentPressure = 0f;
+        
+        var targetY = isOn ? -OFFPOSITION : OFFPOSITION;
         onOffButton.rotation = Quaternion.Euler(onOffButton.localEulerAngles.x, targetY, onOffButton.localEulerAngles.z);
     }
+
+    public void SetPedalPressure(float pressure)
+    {
+        currentPressure = isOn ? pressure : 0f;
+    }
     
-    public bool IsMachineOn() => isRunning;
 }

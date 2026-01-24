@@ -1595,9 +1595,10 @@ MonoBehaviour:
   onOffButton: {fileID: 4612634197251545994}
   machineSound: {fileID: 7412179148993354080}
   machineClip: {fileID: 8300000, guid: 6aacbc0f00497354b8ab53210a0534f7, type: 3}
-  needleSpeed: 20
+  maxNeedleSpeed: 20
   needleAmplitude: 0.35
-  isRunning: 0
+  currentPressure: 0
+  isOn: 0
 --- !u!82 &7412179148993354080
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1844,6 +1845,8 @@ GameObject:
   - component: {fileID: 1142095659263652317}
   - component: {fileID: 3040535707917554791}
   - component: {fileID: 6847348372765993161}
+  - component: {fileID: 3925573047919311250}
+  - component: {fileID: 486202966462144006}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -2141,6 +2144,48 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3925573047919311250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6035185705249909233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a70800377c1ff3d4e9a966f64180fe92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractWithTrigger
+  triggerActionLeft: {fileID: 0}
+  triggerActionRight: {fileID: 0}
+  onPressureChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5395844834842034523}
+        m_TargetAssemblyTypeName: SewingMachine, Assembly-CSharp
+        m_MethodName: SetPedalPressure
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &486202966462144006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6035185705249909233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 675159c6664074f44a7f992d110ebdad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DropUnderPressure
+  moveOffset: {x: 0, y: -0.02, z: 0}
 --- !u!1 &7448924223526968407
 GameObject:
   m_ObjectHideFlags: 0

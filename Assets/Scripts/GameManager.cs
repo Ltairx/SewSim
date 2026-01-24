@@ -10,9 +10,12 @@ public class GameManager : MonoBehaviour
     [field: SerializeField] private TutorialManager _tutorialManager;
     [field: SerializeField] private UIManager _UIManager;
     [SerializeField] private InputActionReference bButtonAction;
+    
+    [SerializeField] private bool ignoreMenu = true;
 
     private void OnEnable()
     {
+        if (ignoreMenu) return;
         sewLevel.SetActive(false);
         mainMenuLevel.SetActive(true);
         bButtonAction.action.performed += OpenMainMenu;
