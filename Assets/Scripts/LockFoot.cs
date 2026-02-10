@@ -7,13 +7,20 @@ public class LockFoot : MonoBehaviour
     
     public string materialTag = "cloth";
 
-    [SerializeField] private GameObject currentObjectInZone;
-    [SerializeField] private bool isLocked = false;
+    public GameObject currentObjectInZone;
+    public bool isLocked = false;
 
-    private Rigidbody targetRb;
-    private XRGrabInteractable targetGrab;
-    private bool wasKinematicBefore;
+    private Rigidbody _targetRb;
+    private XRGrabInteractable _targetGrab;
+    private bool _wasKinematicBefore;
+    private RigidbodyConstraints _oldConstraints;
+    private XRBaseInteractable.MovementType _oldMovementType;
+    private bool _oldTrackRotation;
+    private bool _oldThrowOnDetach;
 
+    private float _lockedY;
+    private float _lockedZ;
+    private Quaternion _lockedRotation;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -43,23 +50,43 @@ public class LockFoot : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        if (isLocked && currentObjectInZone)
+        {
+            Vector3 currentPos = currentObjectInZone.transform.position;
+            currentObjectInZone.transform.position = new Vector3(currentPos.x, _lockedY, _lockedZ);
+
+            currentObjectInZone.transform.rotation = _lockedRotation;
+        }
+    }
+    
     private void LockObject()
     {
         if (currentObjectInZone == null) return;
 
-        targetRb = currentObjectInZone.GetComponent<Rigidbody>();
-        targetGrab = currentObjectInZone.GetComponent<XRGrabInteractable>();
+        _targetRb = currentObjectInZone.GetComponent<Rigidbody>();
+        _targetGrab = currentObjectInZone.GetComponent<XRGrabInteractable>();
 
-        if (targetRb && targetGrab)
+        if (_targetRb && _targetGrab)
         {
+            _lockedY = currentObjectInZone.transform.position.y;
+            _lockedZ = currentObjectInZone.transform.position.z;
+            _lockedRotation = currentObjectInZone.transform.rotation;
+            
+            _wasKinematicBefore = _targetRb.isKinematic;
+            _oldConstraints = _targetRb.constraints;
+            _oldMovementType = _targetGrab.movementType;
+            _oldTrackRotation = _targetGrab.trackRotation;
+            _oldThrowOnDetach = _targetGrab.throwOnDetach;
 
-            targetGrab.enabled = false;
+            _targetRb.isKinematic = false;
 
-            wasKinematicBefore = targetRb.isKinematic;
-            targetRb.isKinematic = true;
+            _targetRb.constraints = RigidbodyConstraints.FreezeAll & ~RigidbodyConstraints.FreezePositionX;
 
-            // Opcjonalnie: wyrównaj pozycję/rotację idealnie do stołu (Snap)
-            // currentObjectInZone.transform.rotation = Quaternion.identity; 
+            _targetGrab.movementType = XRBaseInteractable.MovementType.VelocityTracking;
+            _targetGrab.trackRotation = false;
+            _targetGrab.throwOnDetach = false;
             
             isLocked = true;
         }
@@ -67,11 +94,14 @@ public class LockFoot : MonoBehaviour
 
     private void UnlockObject()
     {
-        if (targetRb && targetGrab)
+        if (_targetRb && _targetGrab)
         {
-            targetRb.isKinematic = wasKinematicBefore;
+            _targetRb.isKinematic = _wasKinematicBefore;
+            _targetRb.constraints = _oldConstraints;
 
-            targetGrab.enabled = true;
+            _targetGrab.movementType = _oldMovementType;
+            _targetGrab.trackRotation = _oldTrackRotation;
+            _targetGrab.throwOnDetach = _oldThrowOnDetach;
 
             isLocked = false;
         }
