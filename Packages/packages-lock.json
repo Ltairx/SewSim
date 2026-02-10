@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.matusson.ucloth": {
+      "version": "https://github.com/Matusson/UCloth.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.jobs": "0.70.0-preview.7"
+      },
+      "hash": "e0c3055e959b5af82f098579a7b905349d0f4f4e"
+    },
     "com.unity.burst": {
       "version": "1.8.26",
       "depth": 2,
@@ -73,6 +82,15 @@
       "source": "registry",
       "dependencies": {
         "com.unity.modules.uielements": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.jobs": {
+      "version": "0.70.0-preview.7",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.collections": "1.4.0"
       },
       "url": "https://packages.unity.com"
     },
