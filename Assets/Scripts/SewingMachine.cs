@@ -105,19 +105,35 @@ public class SewingMachine : MonoBehaviour
         Vector3 rayOrigin = needleTip.position + (Vector3.up * raycastOffset); 
         Vector3 rayDirection = Vector3.down; 
 
-        RaycastHit hit;
-        if (Physics.Raycast(rayOrigin, rayDirection, out hit, raycastLength, clothLayer))
+        RaycastHit[] hits = Physics.RaycastAll(rayOrigin, rayDirection, raycastLength, clothLayer);
+
+        if (hits.Length > 0)
         {
-            float dist = Vector3.Distance(hit.point, lastStitchPosition);
+            Array.Sort(hits, (x, y) => x.distance.CompareTo(y.distance));
+
+            RaycastHit topHit = hits[0];
+
+            float dist = Vector3.Distance(topHit.point, lastStitchPosition);
+
             if (isFirstStitch || dist > minDistanceBetweenStitches)
             {
-                CreateStitch(hit.point, hit.transform);
-                
-                lastStitchPosition = hit.point;
+                CreateStitch(topHit.point, topHit.transform);
+            
+                lastStitchPosition = topHit.point;
                 isFirstStitch = false;
+
+                if (hits.Length >= 2)
+                {
+                    GameObject topObj = hits[0].collider.gameObject;
+                    GameObject bottomObj = hits[1].collider.gameObject;
+
+                    if (topObj != bottomObj)
+                    {
+                        ConnectCloth(topObj, bottomObj);
+                    }
+                }
             }
         }
-
     }
 
     private void CreateStitch(Vector3 position, Transform clothTransform)
@@ -129,6 +145,30 @@ public class SewingMachine : MonoBehaviour
         newStitch.transform.SetParent(clothTransform, true);
     }
 
+    private void ConnectCloth(GameObject topCloth, GameObject bottomCloth)
+    {
+        Rigidbody topRb = topCloth.GetComponent<Rigidbody>();
+        Rigidbody bottomRb = bottomCloth.GetComponent<Rigidbody>();
+
+        if (topRb != null && bottomRb != null)
+        {
+            FixedJoint[] existingJoints = topCloth.GetComponents<FixedJoint>();
+            foreach (var j in existingJoints)
+            {
+                if (j.connectedBody == bottomRb) return;
+            }
+
+            FixedJoint joint = topCloth.AddComponent<FixedJoint>();
+            joint.connectedBody = bottomRb;
+        
+            joint.breakForce = Mathf.Infinity; 
+            joint.breakTorque = Mathf.Infinity;
+        
+            joint.enableCollision = false; 
+
+        }
+    }
+    
     public void TogglePower()
     {
         isOn = !isOn;

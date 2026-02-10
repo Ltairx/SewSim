@@ -1,109 +1,143 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class LockFoot : MonoBehaviour
 {
     public float lockThreshold = 0.95f;
-    
     public string materialTag = "cloth";
-
-    public GameObject currentObjectInZone;
+    public List<GameObject> objectsInZone = new List<GameObject>();
     public bool isLocked = false;
 
-    private Rigidbody _targetRb;
-    private XRGrabInteractable _targetGrab;
-    private bool _wasKinematicBefore;
-    private RigidbodyConstraints _oldConstraints;
-    private XRBaseInteractable.MovementType _oldMovementType;
-    private bool _oldTrackRotation;
-    private bool _oldThrowOnDetach;
+    private class LockedObjectState
+    {
+        public GameObject obj;
+        public Rigidbody rb;
+        public XRGrabInteractable grab;
+        
+        public bool wasKinematic;
+        public RigidbodyConstraints oldConstraints;
+        public XRBaseInteractable.MovementType oldMovementType;
+        public bool oldTrackRotation;
+        public bool oldThrowOnDetach;
 
-    private float _lockedY;
-    private float _lockedZ;
-    private Quaternion _lockedRotation;
+        public float lockedY;
+        public float lockedZ;
+        public Quaternion lockedRotation;
+    }
+
+    private List<LockedObjectState> activeLocks = new List<LockedObjectState>();
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!isLocked && other.CompareTag(materialTag))
+        if (other.CompareTag(materialTag) && !objectsInZone.Contains(other.gameObject))
         {
-            currentObjectInZone = other.gameObject;
+            objectsInZone.Add(other.gameObject);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (!isLocked && other.gameObject == currentObjectInZone)
+        if (objectsInZone.Contains(other.gameObject))
         {
-            currentObjectInZone = null;
+            objectsInZone.Remove(other.gameObject);
         }
     }
 
     public void UpdateLeverState(float leverValue)
     {
-        if (leverValue >= lockThreshold && currentObjectInZone != null && !isLocked)
+        if (leverValue >= lockThreshold && objectsInZone.Count > 0 && !isLocked)
         {
-            LockObject();
+            LockAllObjects();
         }
         else if (leverValue < lockThreshold && isLocked)
         {
-            UnlockObject();
+            UnlockAllObjects();
         }
     }
 
     private void LateUpdate()
     {
-        if (isLocked && currentObjectInZone)
+        if (isLocked && activeLocks.Count > 0)
         {
-            Vector3 currentPos = currentObjectInZone.transform.position;
-            currentObjectInZone.transform.position = new Vector3(currentPos.x, _lockedY, _lockedZ);
+            for (int i = activeLocks.Count - 1; i >= 0; i--)
+            {
+                var state = activeLocks[i];
 
-            currentObjectInZone.transform.rotation = _lockedRotation;
+                if (!state.obj) 
+                {
+                    activeLocks.RemoveAt(i);
+                    continue;
+                }
+
+                Vector3 currentPos = state.obj.transform.position;
+                state.obj.transform.position = new Vector3(currentPos.x, state.lockedY, state.lockedZ);
+                state.obj.transform.rotation = state.lockedRotation;
+            }
         }
     }
     
-    private void LockObject()
+    private void LockAllObjects()
     {
-        if (currentObjectInZone == null) return;
+        activeLocks.Clear();
 
-        _targetRb = currentObjectInZone.GetComponent<Rigidbody>();
-        _targetGrab = currentObjectInZone.GetComponent<XRGrabInteractable>();
-
-        if (_targetRb && _targetGrab)
+        foreach (GameObject obj in objectsInZone)
         {
-            _lockedY = currentObjectInZone.transform.position.y;
-            _lockedZ = currentObjectInZone.transform.position.z;
-            _lockedRotation = currentObjectInZone.transform.rotation;
-            
-            _wasKinematicBefore = _targetRb.isKinematic;
-            _oldConstraints = _targetRb.constraints;
-            _oldMovementType = _targetGrab.movementType;
-            _oldTrackRotation = _targetGrab.trackRotation;
-            _oldThrowOnDetach = _targetGrab.throwOnDetach;
+            if (obj == null) continue;
 
-            _targetRb.isKinematic = false;
+            Rigidbody rb = obj.GetComponent<Rigidbody>();
+            XRGrabInteractable grab = obj.GetComponent<XRGrabInteractable>();
 
-            _targetRb.constraints = RigidbodyConstraints.FreezeAll & ~RigidbodyConstraints.FreezePositionX;
+            if (rb && grab)
+            {
+                LockedObjectState state = new LockedObjectState();
+                state.obj = obj;
+                state.rb = rb;
+                state.grab = grab;
 
-            _targetGrab.movementType = XRBaseInteractable.MovementType.VelocityTracking;
-            _targetGrab.trackRotation = false;
-            _targetGrab.throwOnDetach = false;
-            
+                state.lockedY = obj.transform.position.y;
+                state.lockedZ = obj.transform.position.z;
+                state.lockedRotation = obj.transform.rotation;
+
+                state.wasKinematic = rb.isKinematic;
+                state.oldConstraints = rb.constraints;
+                state.oldMovementType = grab.movementType;
+                state.oldTrackRotation = grab.trackRotation;
+                state.oldThrowOnDetach = grab.throwOnDetach;
+
+                rb.isKinematic = false;
+                rb.constraints = RigidbodyConstraints.FreezeAll & ~RigidbodyConstraints.FreezePositionX;
+
+                grab.movementType = XRBaseInteractable.MovementType.VelocityTracking;
+                grab.trackRotation = false;
+                grab.throwOnDetach = false;
+
+                activeLocks.Add(state);
+            }
+        }
+
+        if (activeLocks.Count > 0)
+        {
             isLocked = true;
         }
     }
 
-    private void UnlockObject()
+    private void UnlockAllObjects()
     {
-        if (_targetRb && _targetGrab)
+        foreach (var state in activeLocks)
         {
-            _targetRb.isKinematic = _wasKinematicBefore;
-            _targetRb.constraints = _oldConstraints;
+            if (state.obj != null && state.rb != null && state.grab != null)
+            {
+                state.rb.isKinematic = state.wasKinematic;
+                state.rb.constraints = state.oldConstraints;
 
-            _targetGrab.movementType = _oldMovementType;
-            _targetGrab.trackRotation = _oldTrackRotation;
-            _targetGrab.throwOnDetach = _oldThrowOnDetach;
-
-            isLocked = false;
+                state.grab.movementType = state.oldMovementType;
+                state.grab.trackRotation = state.oldTrackRotation;
+                state.grab.throwOnDetach = state.oldThrowOnDetach;
+            }
         }
+
+        activeLocks.Clear();
+        isLocked = false;
     }
 }
