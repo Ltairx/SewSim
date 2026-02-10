@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -8,6 +9,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject mainMenuCanvas;
     [SerializeField] private GameObject sewMenuCanvas;
     [SerializeField] private GameObject tutorialCanvas;
+    [SerializeField] private GameObject sumupCanvas;
+
+    [SerializeField] private TextMeshProUGUI accuracyText;
+    [SerializeField] private TextMeshProUGUI pointsText;
+    [SerializeField] private TextMeshProUGUI timeText;
     
     [SerializeField] private Button prevGameBtn;
     
@@ -26,6 +32,15 @@ public class UIManager : MonoBehaviour
     {
         sewMenuCanvas.SetActive(true);
         tutorialCanvas.SetActive(false);
+    }
+
+    public void OpenSumUpMenu(float points, float accuracy, float time)
+    {
+        accuracyText.text = accuracy.ToString("P2") + "%";
+        pointsText.text = points.ToString();
+        timeText.text = time.ToString("F2");
+
+        sumupCanvas.SetActive(true);
     }
 
     public void OpenTutorialCanvas()

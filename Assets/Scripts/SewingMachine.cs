@@ -17,6 +17,7 @@ public class SewingMachine : MonoBehaviour
     public float raycastOffset = 0.05f;
     public float raycastLength = 0.1f;
     public float minDistanceBetweenStitches = 0.005f;
+    public float idealStitchLength = 0.015f;
     public LayerMask clothLayer;
     
     [Header("Parametry")]
@@ -35,6 +36,9 @@ public class SewingMachine : MonoBehaviour
     private bool hasStitchedInThisCycle = false;
     private Vector3 lastStitchPosition;
     private bool isFirstStitch = true;
+
+    public event Action<float> OnStitchCreated;
+    public event Action<float> OnClothConnected;
 
     void Start()
     {
@@ -117,7 +121,11 @@ public class SewingMachine : MonoBehaviour
 
             if (isFirstStitch || dist > minDistanceBetweenStitches)
             {
-                CreateStitch(topHit.point, topHit.transform);
+                float diff = Mathf.Abs(dist - idealStitchLength);
+
+                float stitchAccuracy = Mathf.Clamp01(1.0f - (diff / (idealStitchLength * 0.8f)));
+
+                CreateStitch(topHit.point, topHit.transform, stitchAccuracy);
             
                 lastStitchPosition = topHit.point;
                 isFirstStitch = false;
@@ -136,13 +144,14 @@ public class SewingMachine : MonoBehaviour
         }
     }
 
-    private void CreateStitch(Vector3 position, Transform clothTransform)
+    private void CreateStitch(Vector3 position, Transform clothTransform, float stitchAccuracy)
     {
         Vector3 spawnPos = position + (Vector3.up * 0.001f);
         
         GameObject newStitch = Instantiate(stitchPrefab, spawnPos, Quaternion.Euler(90, 0, 0));
         
         newStitch.transform.SetParent(clothTransform, true);
+        OnStitchCreated?.Invoke(stitchAccuracy);
     }
 
     private void ConnectCloth(GameObject topCloth, GameObject bottomCloth)
@@ -164,7 +173,12 @@ public class SewingMachine : MonoBehaviour
             joint.breakForce = Mathf.Infinity; 
             joint.breakTorque = Mathf.Infinity;
         
-            joint.enableCollision = false; 
+            joint.enableCollision = false;
+
+            float distanceDeviation = Vector3.Distance(topCloth.transform.position, needleTip.position);
+
+            float accuracy = Mathf.Clamp01(1.0f - (distanceDeviation * 10f));
+            OnClothConnected?.Invoke(accuracy);
 
         }
     }
